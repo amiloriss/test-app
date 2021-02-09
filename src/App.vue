@@ -17,11 +17,12 @@ export default {
 	async mounted() {
 		try {
 			const res = await this.$axios('/clients');
-			const data = res.data;
+			const data = res.data.data;
 			this.tableData = data;
-
-			const something = data.map(el => el.name);
-			console.log(something);
+			console.log(data);
+			// const name = data.map(el => el.name);
+			// const addresses = data.map(el => el.addresses[0]);
+			// console.log(addresses);
 		} catch (error) {
 			console.log(error.message);
 		}
