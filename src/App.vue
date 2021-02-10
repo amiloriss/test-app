@@ -1,6 +1,7 @@
 <template>
 	<div id="app">
 		<Table v-if="tableData" :data="tableData" />
+		<h1 v-else>Some error, please refresh the page</h1>
 	</div>
 </template>
 

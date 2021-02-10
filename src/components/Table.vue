@@ -1,30 +1,61 @@
 <template>
-
-	<table>
-        
-		<thead>
-            <th>
-                <td>Название клиента <br> Адрес</td>
-                <td>Первый из списка почтовый адрес</td>
-                <td>Первый из списка номер телефона</td>
-                <td>Дата создания</td>
-            </th>
-        </thead>
-		<tbody>
-            <tr v-for="(row, index) in data" :key="index">
-                <td v-for="(obj, index) in data" :key="index">{{row[obj.key]}}</td>
-            </tr>
-        </tbody>
-        {{data}}
-	</table>
+	<a-table :columns="columns" :data-source="data">
+		<span slot="customTitle"
+			>Название клиента <br />
+			Адресс
+		</span>
+	</a-table>
 </template>
-
 <script>
-export default {
-    props: ['data']
-}
-</script>
+const columns = [
+	{
+		dataIndex: 'name',
+		key: 'name',
+		slots: { title: 'customTitle' },
+		scopedSlots: { customRender: 'name' },
+	},
+	{
+		title: 'Age',
+		dataIndex: 'age',
+		key: 'age',
+	},
+	{
+		title: 'Address',
+		dataIndex: 'address',
+		key: 'address',
+	},
+];
 
-<style>
-    thead th td{width: 600px; padding: 20px 150px; background-color: rgb(158, 158, 158);}
-</style>
+// const data1 = [
+// 	{
+// 		key: '1',
+// 		name: 'John Brown',
+// 		age: 32,
+// 		address: 'New York No. 1 Lake Park',
+// 		tags: ['nice', 'developer'],
+// 	},
+// 	{
+// 		key: '2',
+// 		name: 'Jim Green',
+// 		age: 42,
+// 		address: 'London No. 1 Lake Park',
+// 		tags: ['loser'],
+// 	},
+// 	{
+// 		key: '3',
+// 		name: 'Joe Black',
+// 		age: 32,
+// 		address: 'Sidney No. 1 Lake Park',
+// 		tags: ['cool', 'teacher'],
+// 	},
+// ];
+
+export default {
+	props: ['data'],
+	data() {
+		return {
+			columns,
+		};
+	},
+};
+</script>
