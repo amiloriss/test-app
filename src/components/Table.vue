@@ -56,6 +56,11 @@ export default {
 		let addressData = [];
 		let createdData = [];
 
+		let editText = (name, address) => {
+			console.log(address);
+			return name + '\n' + address;
+		};
+
 		this.data1.map(client => {
 			clientData.push(client.id);
 			clientName.push(client.name);
@@ -70,7 +75,7 @@ export default {
 				id: clientData[i],
 				// name: clientName[i],
 				// address: addressData[i],
-				client: clientName[i] + addressData[i],
+				client: editText(clientName[i], addressData[i]),
 				email: contactEmailData[i],
 				phone: contactPhoneData[i],
 				createdTime: createdData[i],

@@ -1,31 +1,37 @@
 <template>
 	<div id="app">
-		<Table v-if="tableData" :data="tableData" />
-		<h1 v-else>Some error, please refresh the page</h1>
+		<loading :active.sync="isLoading"></loading>
+		<Table v-if="!isLoading && tableData" :data="tableData" />
+		<h1 v-else-if="isError">Some error, please refresh the page</h1>
 	</div>
 </template>
 
 <script>
+import Loading from 'vue-loading-overlay';
+import 'vue-loading-overlay/dist/vue-loading.css';
 import Table from './components/Table';
 export default {
 	name: 'App',
 	components: {
 		Table,
+		Loading,
 	},
 	data: () => ({
-		tableData: 10,
+		tableData: undefined,
+		isLoading: false,
+		isError: false,
 	}),
 	async mounted() {
 		try {
+			this.isLoading = true;
 			const res = await this.$axios('/clients');
 			const data = res.data.data;
 			this.tableData = data;
-			console.log(data);
-			// const name = data.map(el => el.name);
-			// const addresses = data.map(el => el.addresses[0]);
-			// console.log(addresses);
-		} catch (error) {
-			console.log(error.message);
+
+			this.isLoading = false;
+			throw new Error('It does not work');
+		} catch (e) {
+			this.isError = true;
 		}
 	},
 };
