@@ -1,4 +1,5 @@
 <template>
+	<!-- just table from antd for vue -->
 	<a-table
 		:style="{ whiteSpace: 'pre' }"
 		:pagination="{
@@ -183,6 +184,7 @@ export default {
 		},
 	},
 	mounted() {
+		// our arrays with dome data that output in right order with map method
 		let clientData = [];
 		let clientName = [];
 		let contactEmailData = [];
@@ -191,6 +193,7 @@ export default {
 		let addressNumber = [];
 		let createdData = [];
 
+		// month list for convert number of month in text
 		const monthList = [
 			'January',
 			'February',
@@ -206,10 +209,12 @@ export default {
 			'December',
 		];
 
+		// for convert text with indent and right format
 		let editText = (name, address, addressNumber) => {
 			return name + '\n' + address + ' ' + addressNumber;
 		};
 
+		// for convert date in right format
 		const translateDate = theDate => {
 			const time = theDate.toString().slice(11, 16);
 			const dateArr = theDate
@@ -222,6 +227,7 @@ export default {
 			return day + ' ' + month + ' ' + year + ' ' + time;
 		};
 
+		// get data that we need for record in separate arrays
 		this.data.map(client => {
 			clientData.push(client.id);
 			clientName.push(client.name);
@@ -232,6 +238,7 @@ export default {
 			createdData.push(client.createdAt);
 		});
 
+		// record other array's values in one arry for convenient output in a table
 		for (let i = 0; i < this.dataLength; i++) {
 			this.dataClient.push({
 				id: clientData[i],
