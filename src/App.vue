@@ -1,7 +1,7 @@
 <template>
 	<div id="app">
 		<loading :active.sync="isLoading"></loading>
-		<Table v-if="!isLoading && tableData" :data="tableData" />
+		<Table v-if="!isLoading && tableData" :tableData="tableData" />
 		<h1 v-else-if="isError">Some error, please refresh the page</h1>
 	</div>
 </template>
