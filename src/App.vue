@@ -30,7 +30,7 @@ export default {
 		try {
 			// loading...
 			this.isLoading = true;
-			const res = await this.$axios('/clients?take=15000');
+			const res = await this.$axios(`/clients`);
 			const data = res.data.data;
 			this.tableData = data;
 			// when we get data remove loading by loading: false
