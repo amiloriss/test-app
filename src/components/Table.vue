@@ -1,121 +1,266 @@
 <template>
-  <a-table
-    :style="{ whiteSpace: 'pre' }"
-	:pagination="{defaultPageSize: 10, showSizeChanger: true, pageSizeOptions: ['10', '20', '30']}"
-    :columns="columns"
-    :data-source="dataClient"
-    :rowKey="(record) => record.id"
-  >
-    <span slot="customTitle">Название клиента<br />Адрес </span>
-  </a-table>
+	<!-- just table from antd for vue -->
+	<a-table
+		:style="{ whiteSpace: 'pre' }"
+		:pagination="{
+			defaultPageSize: 50,
+			showSizeChanger: true,
+			pageSizeOptions: ['50', '100', '150', '200'],
+		}"
+		:columns="columns"
+		:data-source="dataClient"
+		:rowKey="record => record.id"
+	>
+		<div
+			slot="filterDropdown"
+			slot-scope="{
+				setSelectedKeys,
+				selectedKeys,
+				confirm,
+				clearFilters,
+				column,
+			}"
+			style="padding: 8px"
+		>
+			<a-input
+				v-ant-ref="c => (searchInput = c)"
+				:placeholder="`Search ${column.dataIndex}`"
+				:value="selectedKeys[0]"
+				style="width: 200px; margin-bottom: 8px; display: block;"
+				@change="e => setSelectedKeys(e.target.value ? [e.target.value] : [])"
+				@pressEnter="
+					() => handleSearch(selectedKeys, confirm, column.dataIndex)
+				"
+			/>
+			<a-button
+				type="primary"
+				icon="search"
+				size="small"
+				style="width: 90px; margin-right: 8px"
+				@click="() => handleSearch(selectedKeys, confirm, column.dataIndex)"
+			>
+				Search
+			</a-button>
+			<a-button
+				size="small"
+				style="width: 90px"
+				@click="() => handleReset(clearFilters)"
+			>
+				Reset
+			</a-button>
+		</div>
+		<a-icon
+			slot="filterIcon"
+			slot-scope="filtered"
+			type="search"
+			:style="{
+				color: filtered ? '#108ee9' : undefined,
+			}"
+		/>
+		<template slot="customRender" slot-scope="text, record, index, column">
+			<span v-if="searchText && searchedColumn === column.dataIndex">
+				<template
+					v-for="(fragment, i) in text
+						.toString()
+						.split(new RegExp(`(?<=${searchText})|(?=${searchText})`, 'i'))"
+				>
+					<span
+						v-if="fragment.toLowerCase() === searchText.toLowerCase()"
+						:key="i"
+						class="highlight"
+						>{{ fragment }}</span
+					>
+					<template v-else>{{ fragment }}</template>
+				</template>
+			</span>
+			<template v-else>
+				{{ text }}
+			</template>
+		</template>
+	</a-table>
 </template>
 <script>
-const columns = [
-  {
-    dataIndex: "client",
-    key: "name",
-    width: "25%",
-    slots: { title: "customTitle" },
-  },
-
-  {
-    title: "Первый из списка почтовый адрес",
-    dataIndex: "email",
-    width: "25%",
-    key: "email",
-  },
-  {
-    title: "Первый из списка номер телефона",
-    dataIndex: "phone",
-    width: "25%",
-    key: "phone",
-  },
-  {
-    title: "Дата создания",
-    dataIndex: "createdTime",
-    width: "25%",
-    key: "createdTime",
-  },
-];
 export default {
-  props: ["data"],
-  data() {
-    return {
-      columns,
-      dataLength: this.data.length,
-      data1: this.data,
-      dataClient: [],
-    };
-  },
-  mounted() {
-    let clientData = [];
-    let clientName = [];
-    let contactEmailData = [];
-    let contactPhoneData = [];
-    let addressData = [];
-    let addressNumber = [];
-    let createdData = [];
+	props: ['tableData'],
+	data() {
+		return {
+			columns: [
+				{
+					title: 'Название клиента / Адрес',
+					dataIndex: 'client',
+					key: 'client',
+					width: '25%',
+					slots: { title: 'customTitle' },
+					scopedSlots: {
+						filterDropdown: 'filterDropdown',
+						filterIcon: 'filterIcon',
+						customRender: 'customRender',
+					},
+					onFilter: (value, record) => {
+						return record.client
+							.toString()
+							.toLowerCase()
+							.includes(value.toLowerCase().trim());
+					},
+					onFilterDropdownVisibleChange: visible => {
+						if (visible) {
+							setTimeout(() => {
+								this.searchInput.focus();
+							}, 0);
+						}
+					},
+				},
+				{
+					title: 'Первый из списка почтовый адрес',
+					dataIndex: 'email',
+					width: '25%',
+					key: 'email',
+					scopedSlots: {
+						filterDropdown: 'filterDropdown',
+						filterIcon: 'filterIcon',
+						customRender: 'customRender',
+					},
+					onFilter: (value, record) =>
+						record.email
+							.toString()
+							.toLowerCase()
+							.includes(value.toLowerCase().trim()),
+					onFilterDropdownVisibleChange: visible => {
+						if (visible) {
+							setTimeout(() => {
+								this.searchInput.focus();
+							});
+						}
+					},
+				},
+				{
+					title: 'Первый из списка номер телефона',
+					dataIndex: 'phone',
+					width: '25%',
+					key: 'phone',
+					scopedSlots: {
+						filterDropdown: 'filterDropdown',
+						filterIcon: 'filterIcon',
+						customRender: 'customRender',
+					},
+					onFilter: (value, record) =>
+						record.phone
+							.toString()
+							.toLowerCase()
+							.includes(value.toLowerCase().trim()),
+					onFilterDropdownVisibleChange: visible => {
+						if (visible) {
+							setTimeout(() => {
+								this.searchInput.focus();
+							});
+						}
+					},
+				},
+				{
+					title: 'Дата создания',
+					dataIndex: 'createdTime',
+					width: '25%',
+					key: 'createdTime',
+				},
+			],
+			dataLength: this.tableData.length,
+			data: this.tableData,
+			dataClient: [],
+			searchText: '',
+			searchInput: '',
+			searchedColumn: '',
+		};
+	},
+	methods: {
+		handleSearch(selectedKeys, confirm, dataIndex) {
+			confirm();
+			this.searchText = selectedKeys[0];
+			this.searchedColumn = dataIndex;
+		},
 
-    const monthList = [
-      "January",
-      "February",
-      "March",
-      "April",
-      "May",
-      "June",
-      "July",
-      "August",
-      "September",
-      "October",
-      "November",
-      "December",
-    ];
+		handleReset(clearFilters) {
+			clearFilters();
+			this.searchText = '';
+		},
+	},
+	mounted() {
+		// our arrays with dome data that output in right order with map method
+		let clientData = [];
+		let clientName = [];
+		let contactEmailData = [];
+		let contactPhoneData = [];
+		let addressData = [];
+		let addressNumber = [];
+		let createdData = [];
 
-    let editText = (name, address, addressNumber) => {
-      return name + "\n" + address + " " + addressNumber;
-    };
+		// month list for convert number of month in text
+		const monthList = [
+			'January',
+			'February',
+			'March',
+			'April',
+			'May',
+			'June',
+			'July',
+			'August',
+			'September',
+			'October',
+			'November',
+			'December',
+		];
 
-    const translateDate = (theDate) => {
-		const time = theDate.toString().slice(11, 16)
-		const dateArr = theDate.toString().slice(0, 10).split("-");
-      const day = dateArr[2];
-      const month = monthList[--dateArr[1]];
-      const year = dateArr[0];
-      return day + " " + month + " " + year + " " + time;
-    };
+		// for convert text with indent and right format
+		let editText = (name, address, addressNumber) => {
+			return name + '\n' + address + ' ' + addressNumber;
+		};
 
-    this.data1.map((client) => {
-      clientData.push(client.id);
-      clientName.push(client.name);
-      addressData.push(client.addresses[0].streetName);
-      addressNumber.push(client.addresses[0].streetNumber);
-      contactEmailData.push(client.contacts[0].emails[0]);
-      contactPhoneData.push(client.contacts[0].phones[0]);
-      createdData.push(client.createdAt);
-    });
+		// for convert date in right format
+		const translateDate = theDate => {
+			const time = theDate.toString().slice(11, 16);
+			const dateArr = theDate
+				.toString()
+				.slice(0, 10)
+				.split('-');
+			const day = dateArr[2];
+			const month = monthList[--dateArr[1]];
+			const year = dateArr[0];
+			return day + ' ' + month + ' ' + year + ' ' + time;
+		};
 
-    for (let i = 0; i < this.dataLength; i++) {
-      this.dataClient.push({
-        id: clientData[i],
-        client: editText(clientName[i], addressData[i], addressNumber[i]),
-        email: contactEmailData[i],
-        phone: contactPhoneData[i],
-        createdTime: translateDate(createdData[i]),
-      });
-    }
-  },
+		// get data that we need for record in separate arrays
+		this.data.map(client => {
+			clientData.push(client.id);
+			clientName.push(client.name);
+			addressData.push(client.addresses[0].streetName);
+			addressNumber.push(client.addresses[0].streetNumber);
+			contactEmailData.push(client.contacts[0].emails[0]);
+			contactPhoneData.push(client.contacts[0].phones[0]);
+			createdData.push(client.createdAt);
+		});
+
+		// record other array's values in one arry for convenient output in a table
+		for (let i = 0; i < this.dataLength; i++) {
+			this.dataClient.push({
+				id: clientData[i],
+				client: editText(clientName[i], addressData[i], addressNumber[i]),
+				email: contactEmailData[i],
+				phone: contactPhoneData[i],
+				createdTime: translateDate(createdData[i]),
+			});
+		}
+	},
 };
 </script>
 
 <style>
 .ant-table-thead > tr > th,
 .ant-table table {
-  text-align: center !important;
+	text-align: center !important;
 }
 .ant-table-wrapper::before {
-  white-space: normal;
+	white-space: normal;
 }
-.ant-table-pagination{
+.ant-table-pagination {
 	display: flex;
 }
 </style>
