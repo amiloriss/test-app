@@ -1,24 +1,11 @@
-# test-app
+In this project I use vue.js, api and antd design library
 
-## Project setup
-```
-npm install
-```
+<!-- start project -->
 
-### Compiles and hot-reloads for development
-```
-npm run serve
-```
+to run this project you need:
 
-### Compiles and minifies for production
-```
-npm run build
-```
+1. download this project (git clone or just download this as archive)
+2. type command 'npm install' to install all dependencies you need to run this
+3. finally you need to run 'npm run serve' and that's it
 
-### Lints and fixes files
-```
-npm run lint
-```
-
-### Customize configuration
-See [Configuration Reference](https://cli.vuejs.org/config/).
+Hope you enjoy 😃
