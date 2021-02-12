@@ -56,7 +56,6 @@
 				color: filtered ? '#108ee9' : undefined,
 			}"
 		/>
-		<span slot="customTitle">Название клиента<br />Адрес </span>
 		<template slot="customRender" slot-scope="text, record, index, column">
 			<span v-if="searchText && searchedColumn === column.dataIndex">
 				<template
@@ -80,39 +79,13 @@
 	</a-table>
 </template>
 <script>
-// const columns = [
-// 	{
-// 		dataIndex: 'client',
-// 		key: 'name',
-// 		width: '25%',
-// 		slots: { title: 'customTitle' },
-// 	},
-
-// 	{
-// 		title: 'Первый из списка почтовый адрес',
-// 		dataIndex: 'email',
-// 		width: '25%',
-// 		key: 'email',
-// 	},
-// 	{
-// 		title: 'Первый из списка номер телефона',
-// 		dataIndex: 'phone',
-// 		width: '25%',
-// 		key: 'phone',
-// 	},
-// 	{
-// 		title: 'Дата создания',
-// 		dataIndex: 'createdTime',
-// 		width: '25%',
-// 		key: 'createdTime',
-// 	},
-// ];
 export default {
 	props: ['tableData'],
 	data() {
 		return {
 			columns: [
 				{
+					title: 'Название клиента / Адрес',
 					dataIndex: 'client',
 					key: 'client',
 					width: '25%',
@@ -122,11 +95,12 @@ export default {
 						filterIcon: 'filterIcon',
 						customRender: 'customRender',
 					},
-					onFilter: (value, record) =>
-						record.client
+					onFilter: (value, record) => {
+						return record.client
 							.toString()
 							.toLowerCase()
-							.includes(value.toLowerCase()),
+							.includes(value.toLowerCase().trim());
+					},
 					onFilterDropdownVisibleChange: visible => {
 						if (visible) {
 							setTimeout(() => {
@@ -149,7 +123,7 @@ export default {
 						record.email
 							.toString()
 							.toLowerCase()
-							.includes(value.toLowerCase()),
+							.includes(value.toLowerCase().trim()),
 					onFilterDropdownVisibleChange: visible => {
 						if (visible) {
 							setTimeout(() => {
@@ -172,7 +146,7 @@ export default {
 						record.phone
 							.toString()
 							.toLowerCase()
-							.includes(value.toLowerCase()),
+							.includes(value.toLowerCase().trim()),
 					onFilterDropdownVisibleChange: visible => {
 						if (visible) {
 							setTimeout(() => {
@@ -192,7 +166,7 @@ export default {
 			data: this.tableData,
 			dataClient: [],
 			searchText: '',
-			searchInput: null,
+			searchInput: '',
 			searchedColumn: '',
 		};
 	},
