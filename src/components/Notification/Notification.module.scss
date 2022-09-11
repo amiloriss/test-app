@@ -1,0 +1,8 @@
+.notification {
+    display: inline-block;
+    border-radius: 15px;
+    padding: 10px;
+    background-color: var(--notification-green-background-color);
+    color: var(--white-color);
+    box-shadow: 0 0 5px var(--silver-color);
+}
